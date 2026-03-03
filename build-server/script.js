@@ -19,7 +19,7 @@ async function init() {
   // FIX 1: Correctly resolve the output path
   const outPath = path.join(__dirname, "output");
 
-  const p = exec(`cd ${outPath} && npm install && npm run build`);
+  const p = exec(`cd ${outPath} && npm install && npm run build -- --base=/__outputs/${PROJECT_ID}/`)
 
   p.stdout.on("data", (data) => {
     console.log(data.toString());
