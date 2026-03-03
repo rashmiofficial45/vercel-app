@@ -1,7 +1,12 @@
-#! bin/bash
+#!/bin/bash
 
-export GIT_REPOSITORY__URL = "$GIT_REPOSITORY__URL"
+# Exit immediately if any command fails
+set -e
 
-git clone $GIT_REPOSITORY__URL /home/app/output
+echo "Cloning repository: $GIT_REPOSITORY__URL"
 
+# The quotes around the variable prevent errors if the URL somehow contains spaces
+git clone "$GIT_REPOSITORY__URL" /home/app/output
+
+echo "Starting deployment script..."
 exec node script.js
