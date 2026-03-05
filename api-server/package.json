@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "@aws-sdk/client-ecs": "^3.1003.0",
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1"
+  }
+}
