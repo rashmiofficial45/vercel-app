@@ -20,7 +20,6 @@ const config = {
   TASK_DEFINITION: process.env.TASK_DEFINITION,
 }
 
-
 app.post("/project", async(req, res) => {
   const { gitUrl } = req.body
   console.log(gitUrl)

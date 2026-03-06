@@ -4,8 +4,11 @@ const fs = require('fs');
 const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
 var mime = require('mime-types');
 const dotenv = require('dotenv');
+const Valkey = require("ioredis");
 
 dotenv.config();
+
+const valkey = new Valkey("REMOVED_SECRET")
 
 const s3Client = new S3Client({
   region: "eu-north-1",
