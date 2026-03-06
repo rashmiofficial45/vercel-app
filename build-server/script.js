@@ -8,7 +8,7 @@ const Valkey = require("ioredis");
 
 dotenv.config();
 
-const valkey = new Valkey(process.env.REDIS_URL)
+const valkey = new Valkey("REMOVED_SECRET")
 
 const s3Client = new S3Client({
   region: "eu-north-1",
@@ -17,9 +17,10 @@ const s3Client = new S3Client({
 const PROJECT_ID = process.env.PROJECT_ID;
 
 function publishLog(log){
-  valkey.publish(`build:${PROJECT_ID}`, JSON.stringify({ log }))
+  valkey.publish(`logs:${PROJECT_ID}`, JSON.stringify({ log }))
 }
 
+console.log("PROJECT_ID from env:", process.env.PROJECT_ID)
 
 async function init() {
   console.log("Executing script");
