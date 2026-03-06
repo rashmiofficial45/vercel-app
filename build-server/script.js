@@ -8,7 +8,7 @@ const Valkey = require("ioredis");
 
 dotenv.config();
 
-const valkey = new Valkey("REMOVED_SECRET")
+const valkey = new Valkey(process.env.REDIS_URL)
 
 const s3Client = new S3Client({
   region: "eu-north-1",
@@ -16,9 +16,14 @@ const s3Client = new S3Client({
 
 const PROJECT_ID = process.env.PROJECT_ID;
 
+function publishLog(log){
+  valkey.publish(`build:${PROJECT_ID}`, JSON.stringify({ log }))
+}
+
+
 async function init() {
   console.log("Executing script");
-
+  publishLog("Build started ...")
   // FIX 1: Correctly resolve the output path
   const outPath = path.join(__dirname, "output");
 
@@ -26,27 +31,32 @@ async function init() {
 
   p.stdout.on("data", (data) => {
     console.log(data.toString());
+    publishLog(data.toString())
   });
 
   // FIX 2: Listen to the "data" event for stderr to catch build/shell errors
   p.stderr.on("data", (data) => {
     console.error("stderr: ", data.toString());
+    publishLog(data.toString())
   });
 
   p.on("close", async (code) => {
     // FIX 3: Stop execution if the build command fails
     if (code !== 0) {
       console.error(`Build process exited with code ${code}. Aborting S3 upload.`);
+      publishLog(`Build process exited with code ${code}. Aborting S3 upload.`)
       return;
     }
 
     console.log("Build completed successfully");
+    publishLog("Build completed successfully")
 
     const distFolderPath = path.join(__dirname, "output", "dist");
 
     // Check if dist folder actually exists before reading
     if (!fs.existsSync(distFolderPath)) {
       console.error("Error: dist folder not found. Did Vite output to a different directory?");
+      publishLog("Error: dist folder not found. Did Vite output to a different directory?")
       return;
     }
 
@@ -70,6 +80,7 @@ async function init() {
 
         await s3Client.send(command);
         console.log(`Uploaded ${fileKey} to S3`);
+        publishLog(`Uploaded ${fileKey} to S3`)
       }
     }
   });
