@@ -8,7 +8,8 @@ const Valkey = require("ioredis");
 
 dotenv.config();
 
-const valkey = new Valkey("REMOVED_SECRET")
+//before pushing the image replace the env with the aiven redis url
+const valkey = new Valkey(process.env.REDIS_URL)
 
 const s3Client = new S3Client({
   region: "eu-north-1",
